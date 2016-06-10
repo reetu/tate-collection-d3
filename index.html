@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>D3 for the Tate Modern Collection</title>
+		<style type="text/css">
+
+			body
+			{
+				padding-top: 50px;
+				padding-left: 100px;
+			}
+
+			.bar
+			{
+				display: inline-block;
+				width: 20px;
+				height: 75px; /* Gets overriden by D3-assigned height below */
+				margin-right: 2px;
+				background-color: teal;
+			}
+
+		</style>
+		<script src="components/d3/d3.js" charset="utf-8"></script>
+	</head>
+
+	<body>
+	<script type="text/javascript">
+		var dataset = [5, 10, 15, 20, 25];
+
+		d3.select('body').selectAll('div')
+				.data(dataset)
+				.enter()
+				.append('div')
+				.attr('class', 'bar')
+				.style('height', function (dataElement) {
+					return dataElement*5 + 'px';
+				})
+
+
+	</script>
+
+	</body>
+</html>
