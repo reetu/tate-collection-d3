@@ -10,7 +10,7 @@
 				padding-left: 100px;
 			}
 
-			#chartArea {
+			#chartArea, #chartArea2 {
 				width: 400px;
 				height: 300px;
 				background-color: #CCC;
@@ -20,7 +20,6 @@
 			{
 				display: inline-block;
 				margin-right: 2px;
-				fill: teal;
 			}
 
 		</style>
@@ -31,11 +30,15 @@
 <body>
 
 	<div id="chartArea"></div>
+	<div id="chartArea2"></div>
 
 	<script type="text/javascript">
+		// rect.x, rect.y -> positioning of top left corner of rect
+		// rect.width, rect.height -> dimensions of rect
+
 		// Random dataset
-		var dataset = _.map(_.range(10), function (i) {
-			return Math.random() * 50;
+		var dataset = _.map(_.range(75), function (i) {
+			return Math.random() * 500;
 		});
 		
 		var chartWidth = 400;
@@ -54,12 +57,13 @@
 				.domain([0, domainMax])
 				.range([0, chartHeight]);
 
+		var rangeColourScale = d3.scale.linear()
+				.domain([0, d3.max(dataset)])
+				.range(['red', 'yellow']);
+
 		var svg = d3.select('#chartArea').append('svg')
 				.attr('width', chartWidth)
 				.attr('height', chartHeight);
-
-		// rect.x, rect.y -> positioning of top left corner of rect
-		// rect.width, rect.height -> dimensions of rect
 
 		svg.selectAll('rect')
 				.data(dataset)
@@ -78,8 +82,40 @@
 					// scaled bar height, depending on domain size
 					return yScale(data);
 				})
-				.attr('width', xScale.rangeBand()); // dynamic bar width
+				.attr('width', xScale.rangeBand()) // dynamic bar width
+				.attr('fill', rangeColourScale);
 
+
+
+		var domainColourScale = d3.scale.linear()
+				.domain([0, dataset.length])
+				.range(['yellow', 'green']);
+
+		var svg2 = d3.select('#chartArea2').append('svg')
+				.attr('width', chartWidth)
+				.attr('height', chartHeight);
+
+		svg2.selectAll('rect')
+				.data(dataset)
+				.enter()
+				.append('rect')
+				.attr('class', 'bar')
+				.attr('x', function (data, index) {
+					// use scaled bar positioning
+					return xScale(data);
+				})
+				.attr('y', function (data) {
+					// relative to chartHeight so that bars are positioned aligned to the bottom of the chartArea
+					return chartHeight - yScale(data);
+				})
+				.attr('height', function (data) {
+					// scaled bar height, depending on domain size
+					return yScale(data);
+				})
+				.attr('width', xScale.rangeBand()) // dynamic bar width
+				.attr('fill', function (data, index) {
+					return domainColourScale(index);
+				});
 	</script>
 
 </body>
