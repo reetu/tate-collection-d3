@@ -10,34 +10,56 @@
 				padding-left: 100px;
 			}
 
+			#chartArea {
+				width: 400px;
+				height: 300px;
+				background-color: #CCC;
+			}
+
 			.bar
 			{
 				display: inline-block;
-				width: 20px;
-				height: 75px; /* Gets overriden by D3-assigned height below */
 				margin-right: 2px;
-				background-color: teal;
+				fill: teal;
 			}
 
 		</style>
 		<script src="components/d3/d3.js" charset="utf-8"></script>
 	</head>
 
-	<body>
+<body>
+
+	<div id="chartArea"></div>
+
 	<script type="text/javascript">
+		var multiplier = 8;
+		var chartHeight = 300;
+		var chartWidth = 400;
+
 		var dataset = [5, 10, 15, 20, 25];
 
-		d3.select('body').selectAll('div')
+
+		var svg = d3.select('#chartArea').append('svg')
+				.attr('width', chartWidth)
+				.attr('height', chartHeight);
+
+		svg.selectAll('rect')
 				.data(dataset)
 				.enter()
-				.append('div')
+				.append('rect')
 				.attr('class', 'bar')
-				.style('height', function (dataElement) {
-					return dataElement*5 + 'px';
+				.attr('x', function (data, index) {
+					return index * 22;
 				})
-
+				.attr('y', function (data) {
+					return chartHeight - (data * multiplier);
+				})
+				.attr('height', function (data) {
+					return data * multiplier;
+				})
+				.attr('width', 20);
 
 	</script>
 
-	</body>
+</body>
 </html>
