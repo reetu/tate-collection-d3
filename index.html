@@ -24,7 +24,8 @@
 			}
 
 		</style>
-		<script src="components/d3/d3.js" charset="utf-8"></script>
+		<script src="components/d3.js" charset="utf-8"></script>
+		<script src="components/lodash.js" charset="utf-8"></script>
 	</head>
 
 <body>
@@ -32,16 +33,21 @@
 	<div id="chartArea"></div>
 
 	<script type="text/javascript">
-		var dataset = [5, 10, 15, 20, 25];
+		// Random dataset
+		var dataset = _.map(_.range(15), function (i) {
+			return Math.random() * 50;
+		});
+		
 		var chartWidth = 400;
 		var chartHeight = 300;
 		var barWidth = 20;
 		var barSpacing = 2;
 
 		// scale maps data from input domain (actual values) to output range (scaled value)
+		var domainMax = d3.max(dataset) * 1.1;
 		var yScale = d3.scaleLinear()
-				.domain([0,25])
-				.range([0,chartHeight]);
+				.domain([0, domainMax])
+				.range([0, chartHeight]);
 
 		var svg = d3.select('#chartArea').append('svg')
 				.attr('width', chartWidth)
