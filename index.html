@@ -48,11 +48,11 @@
 		var dataset = _.map(_.range(75), function (i) {
 			return Math.random() * 500;
 		});
-		
-		var chartWidth = 400;
-		var chartHeight = 150;
-		var barWidth = 20;
-		var barSpacing = 2;
+
+		// Create margin object, remove margins from chart area
+		var margin = {top: 10, right: 5, bottom: 20, left: 20};
+		var chartWidth = 400 - margin.left - margin.right;
+		var chartHeight = 150 - margin.top - margin.bottom;
 
 		// ordinal scale offers rangeBands
 		var xScale = d3.scale.ordinal()
@@ -70,8 +70,17 @@
 				.range(['red', 'yellow']);
 
 		var svgRangeColourScale = d3.select('#chartArea').append('svg')
-				.attr('width', chartWidth)
-				.attr('height', chartHeight);
+				// Add margins to svg size, so the chart is smaller than the chart; now there is room for axes.
+				.attr('width', chartWidth + margin.left + margin.right)
+				.attr('height', chartHeight + margin.top + margin.bottom)
+
+				// Add graphics container. The svg var now refers to a 'g' element, not 'svg' element.
+				// This is ok, because we actually want to work with the 'g' element
+				.append('g')
+
+				// Offset graphics containter by left and top margins
+				.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
 		svgRangeColourScale.selectAll('rect')
 				.data(dataset)
 				.enter()
@@ -99,8 +108,10 @@
 				.range(['yellow', 'green']);
 
 		var svgDomianColourScale = d3.select('#chartArea2').append('svg')
-				.attr('width', chartWidth)
-				.attr('height', chartHeight);
+				.attr('width', chartWidth + margin.left + margin.right)
+				.attr('height', chartHeight + margin.top + margin.bottom)
+				.append('g')
+				.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 		svgDomianColourScale.selectAll('rect')
 				.data(dataset)
 				.enter()
@@ -131,8 +142,10 @@
 				.range(['yellow', 'red', 'orange', 'green']);
 
 		var svgQuantizeColourScale = d3.select('#chartArea3').append('svg')
-				.attr('width', chartWidth)
-				.attr('height', chartHeight);
+				.attr('width', chartWidth + margin.left + margin.right)
+				.attr('height', chartHeight + margin.top + margin.bottom)
+				.append('g')
+				.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 		svgQuantizeColourScale.selectAll('rect')
 				.data(dataset)
 				.enter()
@@ -162,8 +175,10 @@
 				.range(['grey', 'green', 'grey']);
 
 		var svgQuantileColourScale = d3.select('#chartArea4').append('svg')
-				.attr('width', chartWidth)
-				.attr('height', chartHeight);
+				.attr('width', chartWidth + margin.left + margin.right)
+				.attr('height', chartHeight + margin.top + margin.bottom)
+				.append('g')
+				.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 		svgQuantileColourScale.selectAll('rect')
 				.data(dataset)
 				.enter()
