@@ -34,7 +34,7 @@
 
 	<script type="text/javascript">
 		// Random dataset
-		var dataset = _.map(_.range(15), function (i) {
+		var dataset = _.map(_.range(10), function (i) {
 			return Math.random() * 50;
 		});
 		
@@ -43,9 +43,14 @@
 		var barWidth = 20;
 		var barSpacing = 2;
 
+		// ordinal scale offers rangeBands
+		var xScale = d3.scale.ordinal()
+				.domain(dataset)
+				.rangeBands([0, chartWidth], 0.05, 0.3); // (range, insidePadding, outsidePadding)
+
 		// scale maps data from input domain (actual values) to output range (scaled value)
 		var domainMax = d3.max(dataset) * 1.1;
-		var yScale = d3.scaleLinear()
+		var yScale = d3.scale.linear()
 				.domain([0, domainMax])
 				.range([0, chartHeight]);
 
@@ -62,8 +67,8 @@
 				.append('rect')
 				.attr('class', 'bar')
 				.attr('x', function (data, index) {
-					// each bar positioned slightly to the right of the previous one
-					return index * (barWidth + barSpacing);
+					// use scaled bar positioning
+					return xScale(data);
 				})
 				.attr('y', function (data) {
 					// relative to chartHeight so that bars are positioned aligned to the bottom of the chartArea
@@ -73,7 +78,7 @@
 					// scaled bar height, depending on domain size
 					return yScale(data);
 				})
-				.attr('width', barWidth); // standard bar width
+				.attr('width', xScale.rangeBand()); // dynamic bar width
 
 	</script>
 
