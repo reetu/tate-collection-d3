@@ -32,16 +32,23 @@
 	<div id="chartArea"></div>
 
 	<script type="text/javascript">
-		var multiplier = 8;
-		var chartHeight = 300;
-		var chartWidth = 400;
-
 		var dataset = [5, 10, 15, 20, 25];
+		var chartWidth = 400;
+		var chartHeight = 300;
+		var barWidth = 20;
+		var barSpacing = 2;
 
+		// scale maps data from input domain (actual values) to output range (scaled value)
+		var yScale = d3.scaleLinear()
+				.domain([0,25])
+				.range([0,chartHeight]);
 
 		var svg = d3.select('#chartArea').append('svg')
 				.attr('width', chartWidth)
 				.attr('height', chartHeight);
+
+		// rect.x, rect.y -> positioning of top left corner of rect
+		// rect.width, rect.height -> dimensions of rect
 
 		svg.selectAll('rect')
 				.data(dataset)
@@ -49,15 +56,18 @@
 				.append('rect')
 				.attr('class', 'bar')
 				.attr('x', function (data, index) {
-					return index * 22;
+					// each bar positioned slightly to the right of the previous one
+					return index * (barWidth + barSpacing);
 				})
 				.attr('y', function (data) {
-					return chartHeight - (data * multiplier);
+					// relative to chartHeight so that bars are positioned aligned to the bottom of the chartArea
+					return chartHeight - yScale(data);
 				})
 				.attr('height', function (data) {
-					return data * multiplier;
+					// scaled bar height, depending on domain size
+					return yScale(data);
 				})
-				.attr('width', 20);
+				.attr('width', barWidth); // standard bar width
 
 	</script>
 
