@@ -10,7 +10,7 @@
 				padding-left: 100px;
 			}
 
-			#chartArea, #chartArea2 {
+			.chart {
 				width: 400px;
 				height: 300px;
 				background-color: #CCC;
@@ -29,8 +29,10 @@
 
 <body>
 
-	<div id="chartArea"></div>
-	<div id="chartArea2"></div>
+	<div id="chartArea" class="chart"></div>
+	<div id="chartArea2" class="chart"></div>
+	<div id="chartArea3" class="chart"></div>
+	<div id="chartArea4" class="chart"></div>
 
 	<script type="text/javascript">
 		// rect.x, rect.y -> positioning of top left corner of rect
@@ -61,11 +63,10 @@
 				.domain([0, d3.max(dataset)])
 				.range(['red', 'yellow']);
 
-		var svg = d3.select('#chartArea').append('svg')
+		var svgRangeColourScale = d3.select('#chartArea').append('svg')
 				.attr('width', chartWidth)
 				.attr('height', chartHeight);
-
-		svg.selectAll('rect')
+		svgRangeColourScale.selectAll('rect')
 				.data(dataset)
 				.enter()
 				.append('rect')
@@ -91,11 +92,10 @@
 				.domain([0, dataset.length])
 				.range(['yellow', 'green']);
 
-		var svg2 = d3.select('#chartArea2').append('svg')
+		var svgDomianColourScale = d3.select('#chartArea2').append('svg')
 				.attr('width', chartWidth)
 				.attr('height', chartHeight);
-
-		svg2.selectAll('rect')
+		svgDomianColourScale.selectAll('rect')
 				.data(dataset)
 				.enter()
 				.append('rect')
@@ -116,6 +116,70 @@
 				.attr('fill', function (data, index) {
 					return domainColourScale(index);
 				});
+
+
+
+		// quantize scale - even distribution of items into n buckets
+		var quantizeColourScale = d3.scale.quantize()
+				.domain([0, dataset.length])
+				.range(['yellow', 'red', 'orange', 'green']);
+
+		var svgQuantizeColourScale = d3.select('#chartArea3').append('svg')
+				.attr('width', chartWidth)
+				.attr('height', chartHeight);
+		svgQuantizeColourScale.selectAll('rect')
+				.data(dataset)
+				.enter()
+				.append('rect')
+				.attr('class', 'bar')
+				.attr('x', function (data, index) {
+					// use scaled bar positioning
+					return xScale(data);
+				})
+				.attr('y', function (data) {
+					// relative to chartHeight so that bars are positioned aligned to the bottom of the chartArea
+					return chartHeight - yScale(data);
+				})
+				.attr('height', function (data) {
+					// scaled bar height, depending on domain size
+					return yScale(data);
+				})
+				.attr('width', xScale.rangeBand()) // dynamic bar width
+				.attr('fill', function (data, index) {
+					return quantizeColourScale(index);
+				});
+
+
+		// quantile scale - more fine grained control of domain bucket breakdowns
+		var quantileColourScale = d3.scale.quantile()
+				.domain([0, 10, dataset.length-10, dataset.length])
+				.range(['grey', 'green', 'grey']);
+
+		var svgQuantileColourScale = d3.select('#chartArea4').append('svg')
+				.attr('width', chartWidth)
+				.attr('height', chartHeight);
+		svgQuantileColourScale.selectAll('rect')
+				.data(dataset)
+				.enter()
+				.append('rect')
+				.attr('class', 'bar')
+				.attr('x', function (data, index) {
+					// use scaled bar positioning
+					return xScale(data);
+				})
+				.attr('y', function (data) {
+					// relative to chartHeight so that bars are positioned aligned to the bottom of the chartArea
+					return chartHeight - yScale(data);
+				})
+				.attr('height', function (data) {
+					// scaled bar height, depending on domain size
+					return yScale(data);
+				})
+				.attr('width', xScale.rangeBand()) // dynamic bar width
+				.attr('fill', function (data, index) {
+					return quantileColourScale(index);
+				});
+
 	</script>
 
 </body>
